@@ -1,0 +1,14 @@
+# Dependências
+node_modules/
+
+# Variáveis de ambiente
+.env
+.env.local
+server/.env
+
+# Banco de dados e Backups
+dados-postgres/
+backups/
+
+# Logs
+npm-debug.log*
