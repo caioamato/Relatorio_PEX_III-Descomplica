@@ -1,0 +1,91 @@
+ERP ADM Docker
+Visão Geral
+Este é um sistema de ERP simplificado para administração de inventário, solicitações de compra e gerenciamento de usuários. A aplicação é totalmente containerizada utilizando Docker e Docker Compose, garantindo um ambiente de desenvolvimento padronizado e de fácil implantação.
+
+Tecnologias Utilizadas
+Frontend: React 19 (TypeScript), Vite, React Router, Tailwind CSS.
+
+Backend: Node.js com Express.js.
+
+Banco de Dados: PostgreSQL.
+
+Containerização: Docker & Docker Compose.
+
+Gerenciamento de DB: Adminer.
+
+Estrutura do Projeto
+Plaintext
+
+/
+├── server/             # API backend (Express.js)
+├── components/         # Componentes React reutilizáveis
+├── contexts/           # Contextos React (Autenticação, Estado Global)
+├── pages/              # Páginas da aplicação (Dashboard, Inventário, etc.)
+├── .env.example        # Modelo de variáveis de ambiente
+├── docker-compose.yml  # Orquestração dos containers
+├── Dockerfile          # Definição do container frontend
+└── README.md           # Documentação do projeto
+Configuração do Ambiente
+Pré-requisitos
+Docker e Docker Compose instalados.
+
+1. Variáveis de Ambiente
+Por segurança, o arquivo .env nunca deve ser versionado. Crie um arquivo .env na raiz do projeto baseando-se no modelo abaixo:
+
+Code snippet
+
+# --- FRONTEND ---
+VITE_API_BASE_URL=http://localhost:5000
+GEMINI_API_KEY=sua_chave_api_aqui
+
+# --- BACKEND (API) ---
+PORT=5000
+
+# --- BANCO DE DADOS (POSTGRES) ---
+POSTGRES_HOST=postgres
+POSTGRES_PORT=5432
+POSTGRES_USER=seu_usuario_seguro
+POSTGRES_PASSWORD=sua_senha_forte
+POSTGRES_DB=erp_db
+
+# --- CREDENCIAIS PADRÃO ---
+# Define a senha inicial do administrador no primeiro boot
+DEFAULT_ADMIN_PASSWORD=sua_senha_admin_aqui
+2. Iniciando a Aplicação
+Na raiz do projeto, execute o comando para construir e subir os containers:
+
+Bash
+
+docker-compose up --build -d
+--build: Garante que as imagens sejam reconstruídas com as alterações recentes.
+
+-d: Executa os containers em segundo plano (detached mode).
+
+Para encerrar os serviços:
+
+Bash
+
+docker-compose down
+Serviços Disponíveis
+Após o deploy bem-sucedido, os serviços estarão disponíveis nos seguintes endereços:
+
+Aplicação Frontend: http://localhost:3000
+
+API Backend: http://localhost:5000
+
+Adminer (Gestão de DB): http://localhost:8080
+
+Sistema: PostgreSQL
+
+Servidor: postgres
+
+Usuário/Senha: Conforme definido no seu arquivo .env local.
+
+Credenciais Padrão (Primeiro Acesso)
+Ao iniciar a aplicação pela primeira vez, o sistema provisiona um administrador padrão:
+
+Email: admin@exemplo.com.br
+
+Senha: Valor definido em DEFAULT_ADMIN_PASSWORD no arquivo .env.
+
+[!CAUTION] Segurança: Altere a senha do administrador e as credenciais do banco de dados imediatamente após o primeiro acesso em ambientes que não sejam de desenvolvimento local.
