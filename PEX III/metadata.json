@@ -1,0 +1,5 @@
+{
+  "name": "Grupo ND ERP",
+  "description": "Facilities ERP focused on Inventory Management and Purchase Approvals for Grupo ND. Features RBAC, inventory tracking, and automated stock updates upon purchase completion.",
+  "requestFramePermissions": []
+}

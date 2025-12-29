@@ -1,0 +1,85 @@
+version: '3.8'
+
+services:
+  # 1. Banco de Dados
+  postgres:
+    image: postgres:14-alpine
+    container_name: erp_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - ./dados-postgres:/var/lib/postgresql/data
+    networks:
+      - rede-erp
+
+  # 2. Adminer
+  adminer:
+    image: adminer
+    container_name: erp_adminer
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    networks:
+      - rede-erp
+
+  # 3. API
+  api:
+    build: ./server
+    container_name: erp_api
+    restart: always
+    ports:
+      - "${PORT}:${PORT}"
+    environment:
+      - POSTGRES_HOST=${POSTGRES_HOST}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_PORT=${POSTGRES_PORT}
+      - DEFAULT_ADMIN_PASSWORD=${DEFAULT_ADMIN_PASSWORD}
+    depends_on:
+      - postgres
+    networks:
+      - rede-erp
+
+  # 4. Frontend
+  frontend:
+    build: .
+    container_name: erp_frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - VITE_API_BASE_URL=${VITE_API_BASE_URL}
+    networks:
+      - rede-erp
+
+  # 5. Backup Automático (NOVO) 🛡️
+  backup:
+    image: prodrigestivill/postgres-backup-local
+    container_name: erp_backup
+    restart: always
+    volumes:
+      - ./backups:/backups
+    depends_on:
+      - postgres
+    networks:
+      - rede-erp
+    environment:
+      - POSTGRES_HOST=postgres
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - SCHEDULE=@daily      # Backup todo dia à meia-noite
+      - BACKUP_KEEP_DAYS=7   # Mantém só os últimos 7 dias
+
+networks:
+  rede-erp:
+    driver: bridge
